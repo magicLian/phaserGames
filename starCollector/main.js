@@ -60,8 +60,10 @@ function preload() {
 	);
 	this.load.audio('bgm', 'assets/sounds/bgm_01.mp3');
 	this.load.audio('pick_up_coin', 'assets/sounds/coin_pick.wav');
-	this.load.audio('jump', 'assets/sounds/coin_pick.wav');
+	this.load.audio('jump', 'assets/sounds/jump.mp3');
 	this.load.audio('explosion', 'assets/sounds/explosion_04.mp3');
+	this.load.audio('pause', 'assets/sounds/pause.wav');
+	this.load.audio('gameOver', 'assets/sounds/gameOver.mp3');
 }
 
 function create() {
@@ -114,12 +116,22 @@ function createSounds(game) {
 
 	//jump
 	gameObject.sounds.jump  = game.sound.add('jump', {
-		volume : 2
+		volume : 1
 	});
 
 	//explosion
 	gameObject.sounds.explosion  = game.sound.add('explosion', {
-		volume : 1
+		volume : 0.8
+	});
+
+	//pause
+	gameObject.sounds.pause  = game.sound.add('pause', {
+		volume : 0.7
+	});
+
+	//gameOver
+	gameObject.sounds.gameOver  = game.sound.add('gameOver', {
+		volume : 1.5
 	});
 }
 
@@ -200,10 +212,12 @@ function createCursors(game) {
 			//开始游戏
 			game.scene.resume();
 			gameObject.game.stopped = false;
+			gameObject.sounds.pause.play();
 		}else{
 			//暂停游戏
 			game.scene.pause();
 			gameObject.game.stopped = true;
+			gameObject.sounds.pause.play();
 		}
 	},game);
 }
@@ -231,9 +245,10 @@ function collectStar(player, star) {
 
 function hitBomb() {
 	this.sound.stopAll();
-	this.physics.pause();
 	gameObject.player.setTint(0xff0000);
 	gameObject.player.anims.play('turn');
+	this.pause();
 	gameObject.game.gameOver = true;
 	gameObject.sounds.explosion.play();
+	gameObject.sounds.gameOver.play();
 }
